@@ -130,6 +130,8 @@ apply和call的用法类似，构造函数.call(obj, args, args1, ..., argsN) �
 
 具体的实例代码和demo地址：
 
+https://github.com/CHristopherkeith/front-end-summary-this-new
+
 
 
 
