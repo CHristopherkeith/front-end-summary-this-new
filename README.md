@@ -6,12 +6,12 @@
 # 1.作为方法调用（function）的this
 这个是最为简单的，但也可以分为几种情况，我们写一个文件，叫functionThis.js
 1.1 有如下代码：
-
-    function fnThis(){
-        console.log(this);
-    }
-    fnThis();
-
+```
+function fnThis(){
+    console.log(this);
+}
+fnThis();
+```
 打印结果如下：
 
 ![1-1](http://upload-images.jianshu.io/upload_images/10687046-154d36e6aabfb445.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -19,16 +19,16 @@
 可以看到this当前是指向window，这个很好理解，因为this是指向调用者，而fnThis没有调用者，没有调用者就默认为window。
 
 1.2 我们在文件继续添加代码，如下
-
-    var obj = {
-      fnThis: function(){
+```
+var obj = {
+    fnThis: function(){
         console.log(this);
-      }
     }
-    obj.fnThis();
-    var objIns = obj.fnThis;
-    objIns();
-
+}
+obj.fnThis();
+var objIns = obj.fnThis;
+objIns();
+```
 打印结果如下：
 
 ![1-2](http://upload-images.jianshu.io/upload_images/10687046-7223bf1cf38a2355.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -42,21 +42,21 @@
 2.1 说到这里又要提一下构造函数，构造函数，就是可以构造一个对象的函数类，js里面最简单的莫过于直接定义一个对象，这个对象有一些属性的方法，然后用的时候直接拿来用，像我们functionThis.js这个文件里的就是这种情况，这是直接定义，另外还有一些其他的方式就先不展开讲了，下面的例子以比较常见的构造函数的形式为例，至于为什么要用构造函数，简单地讲就是可以用面向对象的形式去编程，可继承，等。
 
 2.2  测试代码如下：
-
-    var thisObj;
-    var ConstructorThis = function(params){
-      this.myParams = params;
-      console.log(this);
-      thisObj = this;
-    }
-    ConstructorThis.prototype.sayParams = function(){
+```
+var thisObj;
+var ConstructorThis = function(params){
+    this.myParams = params;
+    console.log(this);
+    thisObj = this;
+}
+ConstructorThis.prototype.sayParams = function(){
     console.log(this.myParams);
-    }
-    var obj = new ConstructorThis('hi');
-    console.log(obj);
-    console.log(obj === thisObj)
-    obj.sayParams();
-
+}
+var obj = new ConstructorThis('hi');
+console.log(obj);
+console.log(obj === thisObj)
+obj.sayParams();
+```
 打印结果如下：
 
 ![2-2](http://upload-images.jianshu.io/upload_images/10687046-86e0f8058b45d7dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -67,15 +67,15 @@
 2.3  如此一来，因为构造函数需要用new关键字实例化一个对象，那么和1-2作为方法的调用的情况相比，this似乎就不是指向被调用者了？
 
 实际上：
-
-    var obj = new ConstructorThis('hi');
-
+```
+var obj = new ConstructorThis('hi');
+```
 等价于：
-
-    var obj = {};
-    obj.__proto__ = ConstructorThis.prototype;
-    ConstructorThis.call(obj, 'hi');
-
+```
+var obj = {};
+obj.__proto__ = ConstructorThis.prototype;
+ConstructorThis.call(obj, 'hi');
+```
 将第一个代码块改为下面三行的代码块，我们再看一下打印结果：
 
 ![2-3](http://upload-images.jianshu.io/upload_images/10687046-634b5dc115345adf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -92,16 +92,16 @@
 3.1 call或者apply的作用就是改变某个方法的运行环境，也就是改变内部this关键字的指向，正因为有这样的作用，也在js的继承机制中其中有着显著的作用。正如2-3我们讲到的一样，构造函数用call把创建的一个类指向了内部的this关键字，因此构造函数类可以作为一个类被继承，每个不同的实例通过内部的this被赋予了不同的属性。
 
 3.2 call和apply的用法其实很简单，我们看如下代码：
-
-    var CallThis = function(params){
-      console.log(this)
-      this.myParams = params;
-    }
-    CallThis.call();
-    var obj = {otherParams: 'ok'};
-    CallThis.call(obj, 'hi');
-    console.log(obj);
-
+```
+var CallThis = function(params){
+    console.log(this)
+    this.myParams = params;
+}
+CallThis.call();
+var obj = {otherParams: 'ok'};
+CallThis.call(obj, 'hi');
+console.log(obj);
+```
 打印结果如下：
 
 ![3-2](http://upload-images.jianshu.io/upload_images/10687046-ef9b34ffe72d19d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -109,13 +109,13 @@
 第一次call没传任何参数，内部的this打印出来是window，这在第一部分的时候已经说明了；第二次call的时候第一个参数是一个对象，第二个参数对应构造函数的一个参数，可以看到this指向了obj，然后obj被添加了myParams属性，因此 构造函数.call(obj, args)这种形式就是通过call方法把this指向obj，args是传入构造函数内部的参数，需要传多个参数是这样子的 构造函数.call(obj, args, args1, ..., argsN)，第一个参数就是把this指向的对象，这和我们在2-3说到的，new的步骤分解，第三步是一致的。
 
 apply和call的用法类似，构造函数.call(obj, args, args1, ..., argsN) 等同于 构造函数.call(obj, [args, args1, ..., argsN])，我们修改一下代码，将
-
-    CallThis.call(obj, 'hi');
-
+```
+CallThis.call(obj, 'hi');
+```
 替换为
-
-    CallThis.apply(obj, ['hi']);
-
+```
+CallThis.apply(obj, ['hi']);
+```
 可见，打印结果一致：
 
 ![3-2-1](http://upload-images.jianshu.io/upload_images/10687046-70c0dd0a479ea0f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -131,15 +131,3 @@ apply和call的用法类似，构造函数.call(obj, args, args1, ..., argsN) �
 具体的实例代码和demo地址：
 
 https://github.com/CHristopherkeith/front-end-summary-this-new
-
-
-
-
-
-
-
-
-
-
-
-
