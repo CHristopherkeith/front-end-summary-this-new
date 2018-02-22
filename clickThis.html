@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>click this</title>
+</head>
+<body>
+<button onclick="clickThis()">click</button>
+<button onclick="obj.clickThis()">obj</button>
+</body>
+<script type="text/javascript">
+	function clickThis(){
+		alert('11');
+		console.log(this);
+	}
+	var obj = {
+		clickThis: function(){
+			alert('22');
+			console.log(this);
+		}
+	}
+</script>
+</html>
